@@ -24,7 +24,8 @@ void linit(void)
 		lock_table[i].lqtail = 1 + (lock_table[i].lqhead); 
 			
 		lock_table[i].lprio  = -1;	
-                int j=0;
+                
+		int j=0;
         
         	while (j<NPROC) 
 		{
