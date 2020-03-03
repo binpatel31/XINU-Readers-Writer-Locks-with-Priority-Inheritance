@@ -1,4 +1,4 @@
-/* proc.h - isbadpid */
+
 
 #ifndef _PROC_H_
 #define _PROC_H_
@@ -16,7 +16,9 @@
 #define	FDFREE		-1		/* free file descriptor */
 #define PRFREE		'\002'          /* process slot is free         */
 
-
+#ifndef NLOCK
+#define NLOCK          50
+#endif
 /* process state constants */
 
 #define	PRCURR		'\001'		/* process is currently running	*/
@@ -27,6 +29,7 @@
 #define	PRSUSP		'\006'		/* process is suspended		*/
 #define	PRWAIT		'\007'		/* process is on semaphore queue*/
 #define	PRTRECV		'\010'		/* process is timing a receive	*/
+#define	PRLOCK		'\011'	
 
 /* miscellaneous process definitions */
 
@@ -36,8 +39,7 @@
 					/*  is always eligible to run	*/
 #define	BADPID		-1		/* used when invalid pid needed	*/
 
-#define	isbadpid(x)	(x<=0 || x>=NPROC)
-
+#define   isbadpid(x)     (x<=0 || x>=NPROC)
 /* process table entry */
 
 struct	pentry	{
@@ -60,6 +62,11 @@ struct	pentry	{
 	int	fildes[_NFILE];		/* file - device translation	*/
 	int	ppagedev;		/* pageing dgram device		*/
 	int	pwaitret;
+        int     plockret;
+	int 	plock;
+        int     pinh;
+        int     lockid;
+        int     lockheld[NLOCK];
 };
 
 

@@ -40,7 +40,9 @@ struct	mblock	memlist;	/* list of free memory blocks		*/
 #ifdef	Ntty
 struct  tty     tty[Ntty];	/* SLU buffers and mode control		*/
 #endif
-
+//#####################
+struct lentry lock_table[NLOCK];
+//####################
 /* active system status */
 int	numproc;		/* number of live user processes	*/
 int	currpid;		/* id of currently running process	*/
@@ -207,6 +209,7 @@ LOCAL int sysinit()
 	}
 #endif
 
+        
 	linit();			// lock init
 	return(OK);
 }

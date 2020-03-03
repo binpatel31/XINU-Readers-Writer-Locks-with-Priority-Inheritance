@@ -13,38 +13,35 @@
 int ldelete (int lockdescriptor)
 {
 	STATWORD ps;    
+	disable(ps);
 	struct	 lentry	*lptr;
 	
-	int	 pid;
-    	int 	 lock = lockdescriptor;//(int)(lockdescriptor/10);
-//	int	 locki= lockdescriptor - lock * 10;
-
-	disable(ps);
 	
-	if(lock<0 || lock>=NLOCK)
+	if(lockdescriptor<0 || lockdescriptor>=NLOCK)
 	    {
         	restore(ps);
        	 	return(SYSERR);
     	    }
 
 
-	if (lock_table[lock].lstate==FREE) {
+	if (lock_table[lockdescriptor].lstate==FREE) {
 		restore(ps);
 		return(SYSERR);
 	}
+
+	lock_table[lockdescriptor].lstate = FREE;
+
+   //return type should be DELETED for those process who was blocked due to this lock and now this lock is deleted. 
 	
-	lptr = &lock_table[lock];
-	lptr->lstate = FREE;
-	
-//	if (locki != lockiter) {
-//     	restore(ps);
-//	        return(SYSERR);
-//    	}
-    
-	if (nonempty(lptr->lqhead)) {
-		while( (pid=getfirst(lptr->lqhead)) != EMPTY) {
+	int pid;
+	if (nonempty(lock_table[lockdescriptor].lqhead)) 
+	{
+		pid = getfirst(lock_table[lockdescriptor].lqhead);
+		while(pid != EMPTY) 
+		{
 		    proctab[pid].plockret = DELETED;
 		    ready(pid,RESCHNO);
+		    pid = getfirst(lock_table[lockdescriptor].lqhead);
 		}
 		resched();
 	}

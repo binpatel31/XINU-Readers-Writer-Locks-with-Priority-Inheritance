@@ -4,29 +4,33 @@
 #include <q.h>
 #include <lock.h>
 
-struct lentry lock_table[NLOCK];
+
 int nextlock;
-int lockiter;
 
-void linit(void) {
 
-    struct lentry *lptr;
-    int i, j;
+void linit(void) 
+{
+    int i=0;
 
     nextlock = NLOCK - 1;
-    lockiter = 0;
 
-    for (i = 0; i < NLOCK; i++) {
-        (lptr = &lock_table[i])->lstate = FREE;
-        lptr->lqtail = 1 + (lptr->lqhead = newqueue()); 
+
+    while(i < NLOCK) 
+	{
+        	lock_table[i].lstate = FREE;
 		
-	lptr->lprio  = -1;	
-                        
-        for (j=0 ; j<NPROC ; j++) {
-             lptr->process_holding_lock[j] = 0;
-        }
-
-
-    }
-
+		lock_table[i].lqhead = newqueue();
+        	
+		lock_table[i].lqtail = 1 + (lock_table[i].lqhead); 
+			
+		lock_table[i].lprio  = -1;	
+                int j=0;
+        
+        	while (j<NPROC) 
+		{
+             		lock_table[i].process_holding_lock[j] = 0;
+			j+=1;
+        	}
+		i+=1;
+    	}
 }
