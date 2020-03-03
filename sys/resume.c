@@ -16,6 +16,7 @@ SYSCALL resume(int pid)
 	int	prio;			/* priority to return		*/
 
 	disable(ps);
+
 	if (isbadpid(pid) || (pptr= &proctab[pid])->pstate!=PRSUSP) {
 		restore(ps);
 		return(SYSERR);

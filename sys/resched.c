@@ -19,11 +19,27 @@ int resched()
 {
 	register struct	pentry	*optr;	/* pointer to old process entry */
 	register struct	pentry	*nptr;	/* pointer to new process entry */
+        int pid, tmpprio, maxprio = -1, maxpid = 0;
+
+        optr = &proctab[currpid];
+    
+        if ((optr->pstate == PRCURR) && isempty(rdyhead))
+            return OK;
+
+        pid = q[rdytail].qprev;
+        while (pid != rdyhead) {
+            tmpprio = proctab[pid].pinh == 0 ? proctab[pid].pprio : proctab[pid].pinh;
+            if (tmpprio > maxprio) {
+                maxprio = tmpprio;
+                maxpid = pid;
+            }
+            pid = q[pid].qprev;
+        }
+
 
 	/* no switch needed if current process priority higher than next*/
 
-	if ( ( (optr= &proctab[currpid])->pstate == PRCURR) &&
-	   (lastkey(rdytail)<optr->pprio)) {
+	if ( ( optr->pstate == PRCURR) && maxpid < (optr->pinh == 0 ? optr->pprio : optr->pinh) ) {
 		return(OK);
 	}
 	
@@ -35,8 +51,10 @@ int resched()
 	}
 
 	/* remove highest priority process at end of ready list */
-
-	nptr = &proctab[ (currpid = getlast(rdytail)) ];
+	currpid = maxpid;
+        dequeue(maxpid);
+	nptr = &proctab[ (currpid = maxpid) ];
+        nptr = &proctab[currpid];
 	nptr->pstate = PRCURR;		/* mark it currently running	*/
 #ifdef	RTCLOCK
 	preempt = QUANTUM;		/* reset preemption counter	*/
