@@ -30,6 +30,7 @@ int ldelete (int lockdescriptor)
 	}
 
 	lock_table[lockdescriptor].lstate = FREE;
+	lock_avail[lockdescriptor]=0;
 
    //return type should be DELETED for those process who was blocked due to this lock and now this lock is deleted. 
 	

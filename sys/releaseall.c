@@ -96,9 +96,10 @@ int releaseall(numlocks, ldes1)
 		    longwrite = item;
 
 		if (longread >= 0 && longwrite >=0) {
-		    if ( abs(maxreadtime-maxwritetime) < 1000){
-			choice = longwrite;	
-		    }
+		    if ( abs(maxwritetime-maxreadtime) <= 400)   //grace period for reader
+			{
+				choice = longread;	
+		    	}
 		    else if(maxreadtime > maxwritetime) {
 			choice = longread;
 		    }

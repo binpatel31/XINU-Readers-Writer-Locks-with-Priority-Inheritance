@@ -34,9 +34,8 @@ struct lentry {
     	int  process_holding_lock[NPROC];
 };
 
-
+extern lock_avail[NLOCK];
 extern struct lentry lock_table[];
-extern int nextlock;
 
 extern unsigned long ctr1000;
 

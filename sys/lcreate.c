@@ -21,15 +21,18 @@ int lcreate(void)
         int i=0;
 
         while(i<NLOCK) 
-	{
-
-                lck=nextlock;
-                if (nextlock < 0) 
+	{        
+		int tmp,possible_lock;
+		for(tmp=NLOCK; tmp>=0; tmp--)
 		{
-                        nextlock = NLOCK - 1;
-                }
-		nextlock-=1;
-                if (lock_table[lck].lstate==FREE) 
+			if (lock_avail[tmp]==1)
+			{
+			possible_lock=tmp+1;
+			}
+		}
+	
+             	lck=i;
+		if (lock_table[lck].lstate==FREE) 
 		{
                         lock_table[lck].lstate = ACQUIRED;
                         lock_table[lck].num_reader    = 0;
@@ -44,7 +47,7 @@ int lcreate(void)
 		return(SYSERR);
 	}
 
-	if ( lck >= 0 )
+	if ( lck >= 0 && lck < NLOCK )
 	{
 		restore(ps);
         	return(lck);

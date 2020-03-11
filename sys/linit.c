@@ -5,17 +5,22 @@
 #include <lock.h>
 
 
-int nextlock;
-
+int lock_avail[NLOCK];
 
 void linit(void) 
 {
-    int i=0;
 
-    nextlock = NLOCK - 1;
+    	int i=0;
 
-
-    while(i < NLOCK) 
+   	//=========
+    	for(i;i<NLOCK;i++)
+	{
+		lock_avail[i]=0;
+	}
+    	//========
+	i=0;
+    
+	while(i < NLOCK) 
 	{
         	lock_table[i].lstate = FREE;
 		
@@ -24,8 +29,7 @@ void linit(void)
 		lock_table[i].lqtail = 1 + (lock_table[i].lqhead); 
 			
 		lock_table[i].lprio  = -1;	
-                
-		int j=0;
+                int j=0;
         
         	while (j<NPROC) 
 		{
