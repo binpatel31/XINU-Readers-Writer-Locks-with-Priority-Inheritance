@@ -62,7 +62,7 @@ int releaseall(numlocks, ldes1)
 
         lptr->process_holding_lock[currpid] = 0;
         proctab[currpid].lockheld[lock] = 0;
-        update_pinh(currpid);
+        change_pinh_proc(currpid);
 
         if (isempty(lptr->lqhead))
             continue;
@@ -181,10 +181,10 @@ LOCAL void unblock(int lock, int item) {
 
     lptr->process_holding_lock[item]             = 1;
     proctab[currpid].lockheld[lock] = 1;
-    update_lprio(lock);
+    change_lck_proc_prio(lock);
     for(i=0; i<NPROC; i++) {
         if(lptr->process_holding_lock[i] > 0)
-            update_pinh(i);
+            change_pinh_proc(i);
     }
 
     dequeue(item);

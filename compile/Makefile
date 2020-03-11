@@ -51,7 +51,7 @@ SYS =	blkcmp.c	blkequ.c	main.c		stacktrace.c	\
 	unsleep.c	userret.c	wait.c		wakeup.c	\
 	write.c		xdone.c		pci.c		shutdown.c	\
 	lcreate.c	ldelete.c	lock.c		releaseall.c	\
-	linit.c		update_lprio.c	update_pinh.c
+	linit.c		change_lck_proc_prio.c		change_pinh_proc.c
 TTY =	ttyalloc.c	ttycntl.c	ttygetc.c	ttyiin.c	\
 	ttyinit.c	ttynew.c	ttyopen.c	ttyputc.c	\
 	ttyread.c	ttywrite.c	ttyoin.c
@@ -363,6 +363,12 @@ monudp.o: ../mon/monudp.c /usr/include/stdc-predef.h \
 blkcmp.o: ../sys/blkcmp.c /usr/include/stdc-predef.h
 blkequ.o: ../sys/blkequ.c /usr/include/stdc-predef.h ../h/kernel.h \
  ../h/systypes.h ../h/conf.h ../h/mem.h
+change_lck_proc_prio.o: ../sys/change_lck_proc_prio.c \
+ /usr/include/stdc-predef.h ../h/kernel.h ../h/systypes.h ../h/conf.h \
+ ../h/mem.h ../h/q.h ../h/proc.h ../h/lock.h ../h/stdio.h
+change_pinh_proc.o: ../sys/change_pinh_proc.c /usr/include/stdc-predef.h \
+ ../h/kernel.h ../h/systypes.h ../h/conf.h ../h/mem.h ../h/q.h \
+ ../h/proc.h ../h/lock.h ../h/stdio.h
 chprio.o: ../sys/chprio.c /usr/include/stdc-predef.h ../h/conf.h \
  ../h/kernel.h ../h/systypes.h ../h/mem.h ../h/proc.h ../h/q.h \
  ../h/stdio.h ../h/lock.h
@@ -541,12 +547,6 @@ suspend.o: ../sys/suspend.c /usr/include/stdc-predef.h ../h/conf.h \
 unsleep.o: ../sys/unsleep.c /usr/include/stdc-predef.h ../h/conf.h \
  ../h/kernel.h ../h/systypes.h ../h/mem.h ../h/proc.h ../h/q.h \
  ../h/sleep.h ../h/stdio.h
-update_lprio.o: ../sys/update_lprio.c /usr/include/stdc-predef.h \
- ../h/kernel.h ../h/systypes.h ../h/conf.h ../h/mem.h ../h/q.h \
- ../h/proc.h ../h/lock.h ../h/stdio.h
-update_pinh.o: ../sys/update_pinh.c /usr/include/stdc-predef.h \
- ../h/kernel.h ../h/systypes.h ../h/conf.h ../h/mem.h ../h/q.h \
- ../h/proc.h ../h/lock.h ../h/stdio.h
 userret.o: ../sys/userret.c /usr/include/stdc-predef.h ../h/conf.h \
  ../h/kernel.h ../h/systypes.h ../h/mem.h
 wait.o: ../sys/wait.c /usr/include/stdc-predef.h ../h/conf.h \

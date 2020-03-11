@@ -20,7 +20,7 @@ SYSCALL kill(int pid)
 	struct  pentry *pptr;		/* points to proc. table for pid*/
         struct  lentry *lptr;
 
-	int	dev, i;
+	int	dev;
 
 	disable(ps);
 
@@ -55,21 +55,33 @@ SYSCALL kill(int pid)
 			pptr->pstate = PRFREE;
 			break;
 
-        case PRLOCK:
-                        dequeue(pid);
-                        lock_table[pptr->plock].process_holding_lock[pid] = 0;
-                        update_lprio(pptr->plock);
-                        lptr = &lock_table[pptr->plock];
-                        for(i=0; i<NPROC; i++) {
-                            if(lptr->process_holding_lock[i] > 0)
-                                update_pinh(i);
-                        }
-
-                        pptr->pstate = PRFREE;
-                        break;
 	case PRSLEEP:
 	case PRTRECV:	unsleep(pid);
         /* fall through	*/
+	//==========================================
+        case PRLOCK:
+                        dequeue(pid);
+                        lock_table[pptr->plock].process_holding_lock[pid] = 0;
+                        change_lck_proc_prio(pptr->plock);
+                       // lptr = &lock_table[pptr->plock];
+                        int i;
+			while(i<NPROC)
+			{
+				if (lock_table[pptr->plock].process_holding_lock[i]>0)
+				{
+					change_pinh_proc(i);
+				}
+				i+=1;
+			}
+			//for(i=0; i<NPROC; i++) {
+                         //   if(lptr->process_holding_lock[i] > 0)
+                          //      change_pinh_proc(i);
+                        //}
+
+                        pptr->pstate = PRFREE;
+                        break;
+
+	//=========================================
 	default:	pptr->pstate = PRFREE;
 	}
 	restore(ps);

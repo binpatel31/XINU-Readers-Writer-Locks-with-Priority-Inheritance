@@ -21,10 +21,14 @@ int resched()
 	register struct	pentry	*nptr;	
         int proc;
 
-        optr = &proctab[currpid];
+        //optr = &proctab[currpid];
     
-        if ((optr->pstate == PRCURR) && isempty(rdyhead))
-            return OK;
+       // if ((proctab[currpid].pstate == PRCURR) && isempty(rdyhead))
+        //    return OK;
+	if (((optr= &proctab[currpid])->pstate == PRCURR) && (lastkey(rdytail)<optr->pprio)) 
+	{
+		return(OK);
+	}
 
 	// find max prio  pid process 
         proc = q[rdytail].qprev;
@@ -32,6 +36,7 @@ int resched()
 	int max_pid = -1;
         while (proc != rdyhead) 
 	{
+		// take into consider inherited priority and ppriority
 		int cur; 
             	if (proctab[proc].pinh == 0)
 		{
@@ -49,15 +54,31 @@ int resched()
             	proc  = q[proc].qprev;
         }
 
-	/* no switch needed if current process priority higher than next*/
-
-	if (( optr->pstate == PRCURR) && max_pid < (optr->pinh == 0 ? optr->pprio : optr->pinh) ) {
-		return(OK);
-	}
 	
-	/* force context switch */
+	//=======================
+	//IF CURRENT PROCESS IS THE ONE WITH HIGHEST PRIORITY THEN RETURN OK
+	if (( optr->pstate == PRCURR))
+	{
+		int curr_process_priority;
+		if (optr->pinh==0)
+		{
+			curr_process_priority = optr->pprio;
+		}
+		else
+		{
+			curr_process_priority = optr->pinh;
+		}
+	
+		if ( max_prio < curr_process_priority)
+		{
+			return(OK);
+		}
+	}
+        //========================================
+	//ELSE SCHEDULE NEW PROCESS
 
-	if (optr->pstate == PRCURR) {
+	if (optr->pstate == PRCURR) 
+	{
 		optr->pstate = PRREADY;
 		insert(currpid,rdyhead,optr->pprio);
 	}
@@ -65,7 +86,7 @@ int resched()
 	/* remove highest priority process at end of ready list */
 	currpid = max_pid;
         dequeue(max_pid);
-//	nptr = &proctab[ (currpid = max_pid) ];
+	//nptr = &proctab[ (currpid = max_pid) ];
         nptr = &proctab[currpid];
 	nptr->pstate = PRCURR;		/* mark it currently running	*/
 #ifdef	RTCLOCK

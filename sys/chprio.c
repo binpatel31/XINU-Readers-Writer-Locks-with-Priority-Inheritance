@@ -28,10 +28,10 @@ SYSCALL chprio(int pid, int newprio)
 		insert(pid, rdyhead, pptr -> pprio);
 	}
 
-        update_pinh(pid);
+        change_pinh_proc(pid);
         if (pptr->pstate == PRLOCK) {
-            update_lprio(pptr->plock);
-            update_pinh(pptr->plock);
+            change_lck_proc_prio(pptr->plock);
+            change_pinh_proc(pptr->plock);
         }
 
 
