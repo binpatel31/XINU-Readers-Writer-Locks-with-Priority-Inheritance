@@ -1,0 +1,62 @@
+1) The priority inversion problem could cause that a higher-priority process needs to wait for the completion of a lower-priority process. Priority inheritance is one approach to address this issue. 
+a)Please give another approach and briefly describe its idea.
+
+Ans :- Alternate approach can be Lock-free synchronization or non-blocking synchronization in which perform changes on shadow copies. And when task completed, perform atomic swaps (use compare-and-swap instruction). This approach of non-blocking can avoid blocking of higher priority process by lower priority process. 
+	Reference - http://www.cse.unsw.edu.au/~cs9242/02/lectures/10-smp/node3.html
+
+b) 
+Ans-
+	Here three process with LOW(10),MED(25) and HIGH(40) priority is created. 
+	- As shown if we use LOCK then first priority of low priority process is increased and so the flow is 
+	LOW priority process runs -> then HIGH priority process runs and finally -> MED priority process will be given chance to run.
+	- But if we use semaphore, then it will no do priority inheritance and so flow will be
+	LOW priority process runs -> then MED priority process runs and finally -> HIGH priority process run 
+
+	OUTPUT:-
+
+	Using Lock ===================================================
+	Starting LOW PRIORITY PROCESS
+	writer LOW: request to acquire lock with priority 10
+	writer LOW: acquired the lock with priorty 10
+	Starting MEDIUM PRIORITY PROCESS
+	  reader MED: Normal process MED with priority 25
+	writer LOW doing task first =====
+	Starting HIGH PRIORITY PROCESS
+	writer HIGH: request to acquire lock with priority 40
+	Increase priority of LOW PRIOR writer to 40
+	writer LOW doing task second =====
+	writer LOW: released the lock with priority 40
+	writer HIGH: acquired the lock with priorty 40
+	writer HIGH doing task first =====
+	MED PROC === doing Remaining task
+	reader MED: to release its CPU
+	Lock Finished =================================================!
+	=========================================================================================
+
+	Using Semaphores=================================================
+	Starting LOW PRIORITY PROCESS
+	writer LOW: request to acquire lock with priority 10
+	writer LOW: acquired the lock with priorty 10
+	writer LOW doing task first =====
+	writer HIGH doing task second =====
+	writer HIGH: released the lock with priority 40
+	Starting MEDIUM PRIORITY PROCESS
+	 reader MED: Normal process MED with priority 25
+	reader MED: to release its CPU
+	Starting HIGH PRIORITY PROCESS
+	writer HIGH: request to acquire lock with priority 40
+	writer LOW doing task second =====
+	writer LOW: released the lock with priority 10
+	writer HIGH: acquired the lock with priorty 40
+	writer HIGH doing task first =====
+	writer HIGH doing task second =====
+	writer HIGH: released the lock with priority 40
+
+	Semaphore Finished ===========================================
+
+================================================================================================================================================================
+=================================================================================================================================================================
+
+2) Synchronization is a quite complex issue in operating systems. To show your understanding about process synchronization, you are asked to point out a potential problem in this pesudo-code: task2_sync_issue.c. 
+
+Ans:- This code prioritize Readers over writer and so it leads to starvation of writer process if new readers (>1) constantly put request to read. 
